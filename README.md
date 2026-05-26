@@ -1,113 +1,224 @@
+# RENTACAR (Rent-a-Ride)
 
-# Rent a Ride
+RENTACAR is a full-stack car rental platform with three roles (User, Vendor, Admin). The project is split into a React (Vite) client and an Express + MongoDB backend.
 
-This repository contains the code for a Full stack car rental website with 3 modules User,Admin,Vendor . The project is divided into Client  and  backend 
+## What You Get
 
+### User Module
 
-## Installation
+- Browse the fleet, search, sort, and filter vehicles
+- View vehicle details and availability
+- Book vehicles and view booking history
+- Profile management
+- Booking confirmation email
+- Payments: Razorpay and Stripe
 
-Clone Rent a Ride
+### Vendor Module
 
-```bash
-https://github.com/jeevan-aj/Rent-a-Ride.git
-```
+- Vendor signup/signin (separate flow from users)
+- Add/edit/delete vehicles (with media uploads)
+- View vendor bookings
 
-Install node modules
+### Admin Module
 
-```bash
-  cd backend
-  npm install
-  npm run dev
-```
-```bash
-  cd client
-  npm install
-  npm run dev
-```
+- Admin dashboard and platform management
+- Add/edit/delete vehicles
+- Approve/reject vendor vehicle requests
+- View and manage users, vendors, and bookings
+- Seed/location master data endpoints (admin-only)
 
-    
 ## Tech Stack
 
-**Client:** React, Javascript, Redux Toolkit, Material Ui, TailwindCSS, React Toast 
+- Frontend: React (Vite), Redux Toolkit, Tailwind CSS, Material UI, React Hook Form, Zod
+- Backend: Node.js, Express.js, MongoDB (Mongoose), JWT (access + refresh), Multer, Nodemailer, Cloudinary
+- Payments: Razorpay + Stripe (Stripe supports a mock/dev mode)
 
-**Server:** Express.js, Mongodb, Cloudinary, Nodemailer , Multer
+## Repository Layout
 
-**Deployed frontend and backend  On AWS ec2, Nginx as Reverse Proxy ,Cloudflare as Dns resolver ,Used Pm2 for uptime**
+```text
+RENTACAR/
+  backend/                 Express API + MongoDB models/routes/controllers
+  client/                  React (Vite) web app
+  package.json             Backend dependencies + backend scripts (root-level)
+  vercel.json              Frontend deployment rewrites (/api -> hosted backend)
+```
 
+Important: backend dependencies are installed from the repository root (there is no `backend/package.json`).
 
-## Project Description
-A full-scale Car Rental Platform with user, admin, and vendor modules, designed to offer seamless vehicle booking, management, and administration. The platform is developed using modern technologies to ensure smooth and efficient operations, catering to different user roles with distinct functionalities.
+## Local Setup
 
-##
+### Prerequisites
 
-**Key Features & Modules:**
+- Node.js (recommended: latest LTS)
+- MongoDB (local or Atlas)
 
-**User Module:**
+### 1) Clone
 
-* View and Book Vehicles: Users can view available vehicles and book them online.
-* Profile Management: Users can view and edit their profiles, as well as manage their account settings.
-* Order Management: View past and upcoming orders; users can only access their own bookings.
-* Account Management: Users can sign up, sign in, delete their account, and sign out seamlessly.
-* Email Notifications: After booking a vehicle, users receive an email with order details.
+```bash
+git clone https://github.com/ARXNDEV/RENTACAR.git
+cd RENTACAR
+```
 
-**Admin Module:**
+### 2) Backend
 
-* Booking Management: Admins can view and manage bookings, including booking details and statuses.
+Install backend dependencies (from repo root):
 
-* Vendor Management: View and approve/reject vendors, as well as remove vendors from the platform.
+```bash
+npm install
+```
 
-* Vehicle Management: Admins can view, update, and delete vehicle listings.
+Create `backend/.env` (required):
 
-* User Management: Admins have the ability to remove users from the platform.
+```bash
+PORT=3000
+mongo_uri=mongodb://127.0.0.1:27017/rentacar
 
-**Vendor Module:**
+ACCESS_TOKEN=your_access_token_secret
+REFRESH_TOKEN=your_refresh_token_secret
 
-* Sign Up and Sign In: Separate sign-up and sign-in flow for vendors.
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
 
-* Vehicle Listing: Vendors can add their vehicles to the platform for approval by the admin. Approved vehicles will be listed on the site.
+CLOUD_NAME=placeholder
+API_KEY=placeholder
+API_SECRET=placeholder
 
-* Order Notifications: Vendors receive updates on orders when users book their vehicles.
+EMAIL_HOST=placeholder
+EMAIL_PASSWORD=placeholder
 
-##
+RAZORPAY_KEY_ID=placeholder
+RAZORPAY_SECRET=placeholder
 
-**Technology Stack:**
+STRIPE_SECRET_KEY=mock_stripe_key_for_dev
+STRIPE_WEBHOOK_SECRET=placeholder
+```
 
-**Frontend:** React.js (with Vite), Redux Toolkit, Tailwind CSS, React Hook Form, Zod for form validation, Google OAuth, Razorpay for payment processing.
+Run backend:
 
-**Backend:** Node.js, Express.js, MongoDB, Multer for handling multipart form data, Nodemailer for sending emails, Cloudinary for media storage, MVC architecture, JWT with access and refresh tokens, Protected routes, Role-based access control.
+```bash
+npm run dev
+```
 
-**Database:** MongoDB with aggregation pipelines, referencing models, and optimized storage solutions.
+Backend URL: `http://localhost:3000`
 
-**Deployment:** Deployed on AWS EC2, utilizing Nginx as a reverse proxy, and Cloudflare for DNS management.
+### 3) Frontend
 
-##
+Install frontend dependencies:
 
-**Features & Implementations:**
+```bash
+cd client
+npm install
+```
 
-* JWT Authentication: Integrated JWT access and refresh tokens to secure user, admin, and vendor login flows.
+Create `client/.env`:
 
-* Role-Based Access: Implemented protected routes and role-based access to restrict access based on user roles (Admin, User, Vendor).
+```bash
+VITE_PRODUCTION_BACKEND_URL=http://localhost:3000
+VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+VITE_RAZORPAY_KEY_ID=your_razorpay_public_key_id
+```
 
-* Dynamic Location Selector: The location picker dynamically updates pickup and drop-off options based on user location selection.
+Run frontend:
 
-* Search, Sort, Filter Functionality: Enhanced search, filter, and sort capabilities for seamless vehicle browsing and booking.
+```bash
+npm run dev
+```
 
-* UI Development: Built most of the UI from scratch, including dynamic form validations using Zod and React Hook Form.
+Frontend URL: `http://localhost:5173`
 
-* Google OAuth: Integrated Google OAuth for quick and secure sign-up/sign-in functionality.
+## Auth + Tokens
 
-* Email Notifications: Implemented automated email notifications for vehicle booking confirmations using Nodemailer.
+- The backend uses JWT access/refresh tokens.
+- Some protected APIs expect `Authorization` in this format:
 
-* Cloudinary Integration: Used Cloudinary to handle image and video storage, reducing the database load by optimizing media assets.
+```text
+Authorization: Bearer <refreshToken>,<accessToken>
+```
 
-* MongoDB: Used four main models to take advantage of MongoDB’s referencing functionality, improving data organization and retrieval efficiency.
+## Seed Data (Development)
 
-* Multer: Utilized Multer to handle file uploads for vehicles, including images and videos.
+### Default Accounts
 
-* Version Control: Employed Git throughout the project for version control, collaboration, and backup.
+On first successful DB connection, the backend seeds:
+- Admin: `admin@rentaride.com` / `admin123`
+- User: `user@rentaride.com` / `user123`
+
+### Seed Vehicles
+
+After setting `mongo_uri` in `backend/.env`:
+
+```bash
+node backend/seed.js
+```
+
+## API (Selected Endpoints)
+
+Base URL: `http://localhost:3000/api`
+
+- Auth (`/api/auth`)
+  - `POST /signup`
+  - `POST /signin`
+  - `POST /google`
+  - `POST /refreshToken`
+- User (`/api/user`)
+  - `GET /listAllVehicles`
+  - `POST /showVehicleDetails`
+  - `POST /searchCar`
+  - `POST /checkAvailability`
+  - `POST /bookCar`
+  - `POST /razorpay`
+  - `POST /create-checkout-session`
+  - `POST /create-payment-intent`
+- Admin (`/api/admin`)
+  - `GET /showVehicles`
+  - `POST /addProduct`
+  - `PUT /editVehicle/:id`
+  - `DELETE /deleteVehicle/:id`
+  - `GET /allUsers`
+  - `GET /allVendors`
+  - `GET /allBookings`
+- Vendor (`/api/vendor`)
+  - `POST /vendorsignup`
+  - `POST /vendorsignin`
+  - `POST /vendorAddVehicle`
+  - `POST /showVendorVehilces`
+  - `POST /vendorBookings`
+
+## Scripts
+
+From repository root:
+
+```bash
+npm run dev
+npm run start
+```
+
+From `client/`:
+
+```bash
+npm run dev
+npm run build
+npm run preview
+```
+
+## Deployment Notes
+
+- `vercel.json` proxies `/api/*` to a hosted backend URL.
+- Typical production setup:
+  - Deploy `client/` to Vercel (or similar)
+  - Deploy `backend/` to Render / EC2 / any Node hosting
+- If you change the frontend domain/port, update backend CORS origins in `backend/server.js`.
+
+## Troubleshooting
+
+- MongoDB not connecting: verify `mongo_uri` and Atlas network allowlist (if using Atlas)
+- CORS errors: add your frontend origin to `allowedOrigins` in `backend/server.js`
+- Google OAuth errors: verify `VITE_GOOGLE_CLIENT_ID` and authorized origins in Google console
+- Stripe webhook: needs a public URL + correct `STRIPE_WEBHOOK_SECRET`
+
 ## Screenshots
 
-//user
+### User
 <img width="1440" alt="Screenshot 2024-04-06 at 3 06 32 PM" src="https://github.com/user-attachments/assets/4b769f7d-5d2c-43a7-8283-07fa8402de92">
 <img width="1430" alt="Screenshot 2024-12-10 at 12 35 41 AM" src="https://github.com/user-attachments/assets/5d6e0160-5f1d-4e67-a64e-1e18fb17a590">
 <img width="1425" alt="Screenshot 2024-12-10 at 12 35 58 AM" src="https://github.com/user-attachments/assets/ac6b0f33-344e-4009-a979-23ea7dc3a5bb">
@@ -116,20 +227,12 @@ A full-scale Car Rental Platform with user, admin, and vendor modules, designed 
 <img width="1428" alt="Screenshot 2024-12-10 at 1 59 45 AM" src="https://github.com/user-attachments/assets/0e87009c-832d-4c5e-be7c-ecd4df341070">
 <img width="1408" alt="Screenshot 2024-12-10 at 2 00 01 AM" src="https://github.com/user-attachments/assets/baf15b5d-2e04-4410-803b-527dddda1aab">
 
-
-//Admin
+### Admin
 <img width="1418" alt="Screenshot 2024-12-10 at 2 01 09 AM" src="https://github.com/user-attachments/assets/c08e3bf0-2776-4236-80b6-6714d52ec8d7">
 <img width="1421" alt="Screenshot 2024-12-10 at 2 04 29 AM" src="https://github.com/user-attachments/assets/ce6dada8-41b7-4aec-b86a-4a359f6d339f">
 <img width="1431" alt="Screenshot 2024-12-10 at 2 04 42 AM" src="https://github.com/user-attachments/assets/467503a4-ab9a-4396-bc57-1abff5fe8106">
 <img width="1418" alt="Screenshot 2024-12-10 at 2 05 02 AM" src="https://github.com/user-attachments/assets/8e1d2948-6316-420b-8336-30ec7c752b04">
 
-
-//vendor
+### Vendor
 <img width="1418" alt="Screenshot 2024-12-10 at 2 05 02 AM" src="https://github.com/user-attachments/assets/59a9a9c7-5dc1-4f61-8d15-43266579386c">
 <img width="1432" alt="Screenshot 2024-12-10 at 2 08 00 AM" src="https://github.com/user-attachments/assets/4e9d8f66-0984-4163-8dea-f9023db56ce0">
-
-
-
-
-
-
